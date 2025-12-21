@@ -275,6 +275,11 @@ class QtCastWindow(QMainWindow):
         self.setWindowTitle(f"QtCast v{__version__}")
         self.setAcceptDrops(True)
 
+        # Set window icon
+        icon_path = Path(__file__).parent.parent / "icons" / "gnomecast_48.png"
+        if icon_path.exists():
+            self.setWindowIcon(QIcon(str(icon_path)))
+
         # State
         self.cast = None
         self.webserver = None
