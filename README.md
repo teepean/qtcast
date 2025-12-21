@@ -1,107 +1,117 @@
-![alt text](https://raw.githubusercontent.com/julienc91/gnomecast/master/docs/screenshot.png)
+# QtCast
 
-Gnomecast ![logo](https://github.com/julienc91/gnomecast/raw/master/icons/gnomecast_16.png)
-=========
+A PyQt6-based GUI for casting local media files to Chromecast devices.
 
-This is a native Linux GUI for casting local files to Chromecast devices.  It supports:
+**QtCast is a port of [Gnomecast](https://github.com/julienc91/gnomecast) using PyQt6 instead of GTK3.**
 
-- Both audio and video files (anything `ffmpeg` can read)
-- Realtime transcoding (only when needed)
-- Subtitles (embedded and external SRT files)
-- Fast scrubbing (waiting 20s for buffering to skip 30s ahead is wrong!)
-- 4K videos on the Chromecast Ultra!
+![QtCast Logo](https://raw.githubusercontent.com/julienc91/gnomecast/master/icons/gnomecast_16.png)
 
-What's New
-----------
+## Features
 
-* `1.9`: Multi video/audio stream support.
-* `1.8`: 5.1/7.1 surround sound E/AC3 support.
-* `1.7`: Drag and drop files into the main UI.
-* `1.6`: Mutiple file / queuing support.
+- ✓ Cast any audio/video file to Chromecast (anything ffmpeg can read)
+- ✓ Automatic smart transcoding (only when needed)
+- ✓ Subtitle support (embedded and external .srt files)
+- ✓ Multi-file queue with drag-and-drop
+- ✓ Fast seeking and scrubbing
+- ✓ Multiple audio/video stream selection
+- ✓ 5.1/7.1 surround sound support
+- ✓ 4K video support on compatible devices
+- ✓ Cross-platform (Linux, macOS, Windows)
 
-Install
--------
-Please run:
+## Installation
 
-```
-$ sudo apt install ffmpeg python3-pip python3-gi
-$ pip3 install gnomecast
-```
+### Prerequisites
 
-If installing in a `mkvirtualenv` built virtual environment, make sure you include the `--system-site-packages` parameter to get the GTK bindings.
+```bash
+# Install ffmpeg (required)
+sudo apt install ffmpeg
 
-Run
----
-
-After installing, log out and log back in.  It will be in your launcher:
-
-![alt text](https://raw.githubusercontent.com/julienc91/gnomecast/master/docs/launcher.png)
-
-You can also run it from the command line:
-
-```
-$ gnomecast
+# On macOS:
+brew install ffmpeg
 ```
 
-Or:
+### Install from source
 
-```
-$ python3 -m gnomecast
-```
-
-You can also configure the port used for the HTTP server via the environment variable `GNOMECAST_HTTP_PORT`:
-
-```
-$ GNOMECAST_HTTP_PORT=8010 python3 -m gnomecast
+```bash
+cd /home/teemu/qtcast
+python3 -m venv venv
+source venv/bin/activate
+pip install -e .
 ```
 
-*Please report bugs, including video files that don't work for you!*
+### Install in Gnomecast venv
 
-Tests
------
+If you already have Gnomecast installed:
 
-Run the tests from the commandline:
+```bash
+cd /home/teemu/gnomecast
+source venv/bin/activate
+cd /home/teemu/qtcast
+pip install PyQt6
+pip install -e .
 ```
-$ python3 test_gnomecast.py
+
+## Usage
+
+### GUI Mode
+
+```bash
+# If installed in venv
+source venv/bin/activate
+python3 -m qtcast
+
+# Or use the launcher script
+./launch-qtcast.sh
 ```
 
-My File Won't Play!
--------------------
+### Features
 
-Chromecasts are picky, and the built in media receiver doesn't give any feedback regarding why it won't play something.  (It just flashes and quits on the main TV.)  If your file won't play, please click the info button:
+1. **Select Chromecast**: Choose your device from the dropdown (or click Refresh)
+2. **Add Files**: Click the + button or drag & drop media files
+3. **Select Streams**: Choose audio tracks and subtitles from the dropdowns
+4. **Play**: Double-click a file or click the play button
+5. **Control**: Use the playback controls (play/pause, stop, rewind, forward)
+6. **Seek**: Drag the scrubber to any position in the video
 
-![image](https://user-images.githubusercontent.com/2049665/66446007-978b5780-e9fd-11e9-87cc-c01f07c67271.png)
+## How It Works
 
-And then the "Report File Doesn't Play" button:
+### Smart Transcoding
 
-![image](https://user-images.githubusercontent.com/2049665/66446040-b12c9f00-e9fd-11e9-8acf-b3bc0d28c971.png)
+QtCast only transcodes when necessary:
 
-So I can fix it!
+- **Container only**: If your video has h264 video + AAC audio in an MKV container, QtCast just rewrites the container to MP4 (100x realtime on most systems)
+- **Audio only**: If video is h264 but audio is AC3, it copies the video stream and only transcodes audio (20x realtime)
+- **Full transcode**: Only if both streams are incompatible (5x realtime)
 
-Thanks To...
-------------
+### Chromecast Compatibility
 
-- https://github.com/balloob/pychromecast
-- https://github.com/pbs/pycaption
-- https://www.ffmpeg.org/
+Chromecasts support:
+- Video: h264, h265 (on Ultra and newer)
+- Audio: AAC, MP3, AC3 (5.1/7.1 on supported devices)
+- Containers: MP4
 
-And everyone who made this project hit [HN's front page](https://news.ycombinator.com/item?id=16386173) and #2 on GitHub's trending list!  That's so awesome!!!
+## Architecture
 
-![alt text](https://raw.githubusercontent.com/julienc91/gnomecast/master/docs/trending.png)
+- **Frontend**: PyQt6 for cross-platform GUI
+- **Backend**: pychromecast for Chromecast communication
+- **Transcoding**: ffmpeg for media analysis and conversion
+- **Streaming**: bottle + paste HTTP server
+- **Subtitles**: pycaption for WebVTT conversion
 
+## Differences from Gnomecast
 
-Transcoding
------------
-Chromecasts only support a handful of media formats.  See: https://developers.google.com/cast/docs/media
+- Uses PyQt6 instead of GTK3
+- Cross-platform (works on Linux, macOS, Windows)
+- Slightly different UI layout (table instead of tree view)
+- Same core functionality and transcoding logic
 
-So some amount of transcoding is necessary if your video files don't conform.  But we're smart about it.  If you have an `.mkv` file with `h264` video and `AAC` audio, we use `ffmpeg` to simply rewrite the container (to `.mp4`) without touching the underlying streams, which my XPS 13 can at around 100x realtime (it's fully IO bound).
+## Credits
 
-Now if you have that same `.mkv` file with and `A3C` audio stream (which Chromecast doesn't support) we'll rewrite the container, copy the `h264` stream as is and only transcode the audio (at about 20x).
+- Original Gnomecast by [Derek Anderson](https://github.com/keredson/gnomecast) and [contributors](https://github.com/julienc91/gnomecast)
+- [pychromecast](https://github.com/balloob/pychromecast)
+- [pycaption](https://github.com/pbs/pycaption)
+- [ffmpeg](https://www.ffmpeg.org/)
 
-If neither your file's audio or video streams are supported, then it'll do a full transcode (at around 5x).
+## License
 
-We write the entire transcoded file to your `/tmp` directory in order to make scrubbing fast and glitch-free, a good trade-off IMO.  Hopefully you're not running your drive at less than one video's worth of free space!
-
-Subtitles
----------
-Chromecast only supports a handful of subtitle formats, `.srt` not included.  But it does support [WebVTT](https://w3c.github.io/webvtt/).  So we extract whatever subtitles are in your video, convert them to WebVTT, and then reattach them to the video through Chomecast's API.
+GPL-3.0-or-later (same as Gnomecast)

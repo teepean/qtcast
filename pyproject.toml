@@ -1,43 +1,24 @@
 [project]
-name = "gnomecast"
-dynamic = ["version"]
-description = "A native Linux GUI for Chromecasting local files."
+name = "qtcast"
+version = "2.0.0"
+description = "A PyQt6 GUI for Chromecasting local media files (port of Gnomecast)"
 readme = "README.md"
 license = { text = "GPL-3.0-or-later" }
 authors = [
-  { name = "Derek Anderson", email = "public@kered.org" }
+  { name = "QtCast Port", email = "qtcast@example.com" }
 ]
-urls = { Homepage = "https://github.com/keredson/gnomecast" }
 requires-python = ">=3.10"
 dependencies = [
+    "PyQt6>=6.0.0",
     "bottle~=0.13.3",
-    "dbus-python>=1.4.0",
-    "html5lib~=1.1",
     "paste~=3.10.1",
     "pycaption~=2.2.16",
     "pychromecast~=13.1.0",
-    "pygobject~=3.52.3",
 ]
-classifiers = [
-  "Development Status :: 5 - Production/Stable",
-  "Intended Audience :: End Users/Desktop",
-  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-  "Operating System :: OS Independent",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: 3",
-]
-
-[build-system]
-requires = ["hatchling >= 1.26"]
-build-backend = "hatchling.build"
-
-[tool.hatch.version]
-path = "gnomecast/version.py"
 
 [project.gui-scripts]
-gnomecast = "gnomecast:main"
+qtcast = "qtcast:main"
 
-[dependency-groups]
-dev = [
-    "ruff>=0.11.13",
-]
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"

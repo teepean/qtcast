@@ -1,0 +1,115 @@
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True, kw_only=True)
+class Device:
+    manufacturer: str
+    model_name: str
+    h265: bool
+    ac3: bool
+
+
+_devices = {
+    # Google Chromecast devices
+    Device(
+        manufacturer="Unknown manufacturer",
+        model_name="Chromecast",
+        h265=False,
+        ac3=False,
+    ),
+    Device(
+        manufacturer="Unknown manufacturer",
+        model_name="Chromecast Ultra",
+        h265=True,
+        ac3=True,
+    ),
+    Device(
+        manufacturer="Unknown manufacturer",
+        model_name="Google Home Mini",
+        h265=False,
+        ac3=False,
+    ),
+    Device(
+        manufacturer="Google",
+        model_name="Google TV Streamer",
+        h265=True,  # Supports 4K HEVC
+        ac3=True,   # Supports Dolby Digital/Digital Plus/Atmos
+    ),
+    Device(
+        manufacturer="Google Inc.",
+        model_name="Chromecast",
+        h265=False,
+        ac3=False,
+    ),
+    Device(
+        manufacturer="Google Inc.",
+        model_name="Chromecast Ultra",
+        h265=True,
+        ac3=True,
+    ),
+
+    # Common TV manufacturers with built-in Chromecast
+    # Most modern smart TVs (2018+) support H.265 and AC3
+    Device(
+        manufacturer="Sony",
+        model_name="BRAVIA",
+        h265=True,
+        ac3=True,
+    ),
+    Device(
+        manufacturer="TCL",
+        model_name="Chromecast",
+        h265=True,
+        ac3=True,
+    ),
+    Device(
+        manufacturer="Philips",
+        model_name="Chromecast",
+        h265=True,
+        ac3=True,
+    ),
+    Device(
+        manufacturer="Sharp",
+        model_name="Chromecast",
+        h265=True,
+        ac3=True,
+    ),
+    Device(
+        manufacturer="Toshiba",
+        model_name="Chromecast",
+        h265=True,
+        ac3=True,
+    ),
+    Device(
+        manufacturer="Hisense",
+        model_name="Chromecast",
+        h265=True,
+        ac3=True,
+    ),
+    Device(
+        manufacturer="Xiaomi",
+        model_name="Mi TV",
+        h265=True,
+        ac3=True,
+    ),
+
+    # Vizio TVs
+    Device(
+        manufacturer="VIZIO",
+        model_name="P75-F1",
+        h265=True,
+        ac3=True,
+    ),
+}
+
+
+def get_device(manufacturer: str, model_name: str) -> Device:
+    """
+    Get a device by its manufacturer and model name.
+    """
+    for device in _devices:
+        if device.manufacturer == manufacturer and device.model_name == model_name:
+            return device
+    return Device(
+        manufacturer="Unknown manufacturer", model_name="Default", h265=False, ac3=False
+    )

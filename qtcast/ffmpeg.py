@@ -3,7 +3,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from gnomecast.utils import get_tempfile_prefix
+from .utils import get_tempfile_prefix
 
 
 def parse_ffmpeg_time(time_s: str) -> float:

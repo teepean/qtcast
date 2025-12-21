@@ -2,15 +2,16 @@ import bottle
 from paste import httpserver
 from paste.translogger import TransLogger
 
-from gnomecast.utils import get_webserver_ip_address, get_webserver_port
+from .utils import get_webserver_ip_address, get_webserver_port
 
 
-class GnomecastWebServer:
-    def __init__(self, get_subtitles, get_transcoder):
+class QtCastWebServer:
+    def __init__(self, get_subtitles, get_transcoder, get_thumbnail):
         self.ip = get_webserver_ip_address()
         self.port = get_webserver_port()
         self.get_subtitles = get_subtitles
         self.get_transcoder = get_transcoder
+        self.get_thumbnail = get_thumbnail
         self.app = bottle.Bottle()
         self._setup_routes()
 
@@ -19,6 +20,9 @@ class GnomecastWebServer:
 
     def get_media_base_url(self) -> str:
         return f"http://{self.ip}:{self.port}/media/"
+
+    def get_thumbnail_url(self) -> str:
+        return f"http://{self.ip}:{self.port}/thumbnail.jpg"
 
     def _setup_routes(self) -> None:
         app = self.app
@@ -50,6 +54,17 @@ class GnomecastWebServer:
             response.headers["Access-Control-Allow-Methods"] = "GET, HEAD"
             response.headers["Access-Control-Allow-Headers"] = "Content-Type"
             return response
+
+        @app.get("/thumbnail.jpg")
+        def thumbnail():
+            thumb_path = self.get_thumbnail()
+            if thumb_path:
+                response = bottle.static_file(thumb_path, root="/")
+                response.headers["Access-Control-Allow-Origin"] = "*"
+                response.headers["Access-Control-Allow-Methods"] = "GET, HEAD"
+                response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+                return response
+            bottle.abort(404, "No thumbnail available")
 
     def start(self) -> None:
         handler = TransLogger(self.app, setup_console_handler=True)

@@ -20,7 +20,7 @@ def get_webserver_ip_address() -> str:
 
 def get_webserver_port() -> int:
     try:
-        return int(os.environ["GNOMECAST_HTTP_PORT"])
+        return int(os.environ["QTCAST_HTTP_PORT"])
     except (KeyError, ValueError, TypeError):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.bind(("0.0.0.0", 0))
@@ -61,7 +61,7 @@ def is_pid_running(pid: int) -> bool:
 
 def get_tempfile_prefix() -> str:
     pid = os.getpid()
-    return f"gnomecast_{pid}_"
+    return f"qtcast_{pid}_"
 
 
 def start_thread(
