@@ -33,7 +33,7 @@ brew install ffmpeg
 ### Install from source
 
 ```bash
-cd /home/teemu/qtcast
+cd /home/user/qtcast
 python3 -m venv venv
 source venv/bin/activate
 pip install -e .
@@ -44,9 +44,9 @@ pip install -e .
 If you already have Gnomecast installed:
 
 ```bash
-cd /home/teemu/gnomecast
+cd /home/user/gnomecast
 source venv/bin/activate
-cd /home/teemu/qtcast
+cd /home/user/qtcast
 pip install PyQt6
 pip install -e .
 ```
@@ -115,3 +115,4 @@ Chromecasts support:
 ## License
 
 GPL-3.0-or-later (same as Gnomecast)
+
